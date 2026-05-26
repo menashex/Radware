@@ -1,0 +1,46 @@
+Step-by-Step Lab Execution & Verification
+We will use your DVWA  container for this walkthrough, as its "SQL Injection" module provides a clear look at vulnerable backend queries.
+
+Phase 1: Verify Lab Functionality
+
+1. On your host machine, open a browser and go to your Target VM's web server: http://<TARGET_IP>:80 (or whichever port your DVWA container maps to).
+
+2. Log in with the default credentials (admin / password).
+
+3. Click on the DVWA Security tab in the left menu, change the dropdown security level to Low, and click Submit.
+
+4. Click on the SQL Injection tab. You will see a user input form asking for a "User ID".
+
+
+----------------------------------
+
+Phase 2: Launching the SQL Injection Attack
+
+Step 1 — Manual Verification
+
+To manually test for SQL injection, the following payload was entered into the email field:
+
+' OR 1=1 --
+
+This payload attempts to alter the backend SQL query logic so the condition always evaluates as TRUE.
+
+1=1
+
+If the application improperly handles user input, the authentication check may be bypassed, resulting in unauthorized access.
+
+
+Step 2 — Automated Testing with SQLMap
+
+To automate the attack and identify the injection type, the following SQLMap command was executed from the Kali Linux attacker machine:
+
+sqlmap -u "http://<TARGET_IP>:<PORT>/rest/user/login" \
+--method POST \
+--data='{"email":"test@test.com","password":"test"}' \
+--headers="Content-Type: application/json" \
+-p email,password \
+--risk=3 \
+--level=5 \
+--batch \
+--ignore-code=401
+
+SQLMap generated hundreds of crafted requests and successfully identified a Boolean-Based Blind SQL Injection vulnerability in the email parameter. The backend database was fingerprinted as SQLite.
