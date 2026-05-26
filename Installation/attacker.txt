@@ -1,0 +1,17 @@
+Kali Linux already comes pre-installed with all the tools you will need to simulate this lab.
+To test the telemetry pipeline, run the following command against your Target vm and check the Wazuh dashboard for alerts:
+
+nmap -A <TARGET_IP>
+
+Filters used on the dashboard log viewer:
+rule.groups: "suricata" AND NOT "Ethertype unknown"
+
+Verified Artifact Matches Found in Lab Tests:
+[+] 20:05:55 - Alert: ET SCAN MS Terminal Server Traffic on Non-standard Port
+    Analysis: Triggered by Nmap RDP service-probing scripts.
+
+[+] 20:05:59 - Alert: SURICATA HTTP Host part of URI is invalid
+    Analysis: Triggered by malformed HTTP request headers injected by the scanner.
+
+[+] 20:06:03 - Alert: ET INFO Outbound MSSQL Connection to Non-Standard Port - Likely Malware
+    Analysis: Triggered by database query probing sequences looking for unauthenticated databases.

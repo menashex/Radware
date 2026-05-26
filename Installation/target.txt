@@ -1,0 +1,62 @@
+Part 1 - Setting up the vulnerable containers
+
+Step 1 - Install the Docker engine and container runtimes:
+sudo apt update && sudo apt install docker.io -y
+
+Step 2 - Deploy OWASP Juice Shop (for XSS, SQLi, and Path Traversal testing):
+sudo docker run -d --name juiceshop --restart always -p 3000:3000 bkimminich/juice-shop
+
+Step 3 - Deploy DVWA (Damn Vulnerable Web Application, optimized for credential brute forcing):
+sudo docker run -d --name dvwa --restart always -p 80:80 vulnerables/web-dvwa
+
+
+----------------------------------
+
+Part 2 - Setting up the Suricata IDS Instrumentation
+
+Step 1 - Add the official Open Information Security Foundation (OISF) stable repository:
+sudo add-apt-repository ppa:oisf/suricata-stable -y
+sudo apt update && sudo apt install suricata -y
+
+Step 2 - Identify the active network interface mapping via `ip a` (e.g., `enp0s18`).
+
+Step 3 - Access the global engine configuration file:
+sudo nano /etc/suricata/suricata.yaml
+
+Step 4 - Adjust the configuration directives to match your network scope and bind to your interface:
+vars:
+  address-groups:
+    HOME_NET: "[192.168.10.0/24]" # Replace with your active lab subnet range
+    EXTERNAL_NET: "any"
+
+af-packet:
+  - interface: enp0s18 # Map strictly to the interface identified in step 2
+
+
+Step 5 - Pull the newest Emerging Threats open-source signature ruleset and launch the daemon:
+sudo suricata-update
+sudo systemctl enable suricata --now
+
+
+----------------------------------
+
+Part 3 - Wazzuh agent deployment & pipeline bridging
+
+Step 1 - Access the Wazuh Dashboard at https://<DEFENDER_IP>, navigate to Deploy New Agent, select Ubuntu (x86_64), and provide the Defender VM IP address.
+
+Step 2 - Execute the dynamically generated deployment string directly on the Target VM to install and point the agent to the controller.
+
+Step 3 - Open the local agent configuration matrix:
+sudo nano /var/ossec/etc/ossec.conf
+
+Step 4 - Edit the following localfile log collector block directly above the terminating `</ossec_config>` tag at the end of the file
+to bridge Suricata to the Wazuh telemetry channel:
+
+      <localfile>
+        <log_format>json</log_format>
+        <location>/var/log/suricata/eve.json</location>
+      </localfile>
+
+Step 5 - Force a system daemon reload and initialize the agent:
+sudo systemctl daemon-reload
+sudo systemctl enable wazuh-agent --now

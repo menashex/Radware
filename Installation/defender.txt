@@ -1,0 +1,11 @@
+The Defender (Wazuh SIEM Server)
+Provision a clean Ubuntu Server instance. Ensure it has internet access for the initial repository fetch.
+
+Step one - Download and execute the official, verified Wazuh All-in-One installation script:
+curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh && sudo bash wazuh-install.sh -a
+
+Step 2 - Secure the unique terminal printout containing the `admin` password and the endpoint URL (`https://<DEFENDER_IP>`) upon successful script termination.
+
+Step 3 - Deploy the Wazuh agent on the Target machine.
+
+Step 4 - Access the Wazuh web-ui and check if you can find the target machine you have just installed the agent on.
