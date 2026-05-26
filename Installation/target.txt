@@ -60,3 +60,10 @@ to bridge Suricata to the Wazuh telemetry channel:
 Step 5 - Force a system daemon reload and initialize the agent:
 sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent --now
+
+
+----------------------------------
+
+Part 4 - snapshot
+
+If your testing environment allows it - I encourage you to take a snapshot of your vm. This will allow easy rollbacks for repeated testing.
