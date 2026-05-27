@@ -1,0 +1,29 @@
+1. Open the url of the server at http://<TARGET-IP>:<TARGET-PORT>
+
+2. Navigate to the search bar on the top right
+
+3. Attempt to search for a legitimate item in the shop. Observe the behavior.
+
+4. Input the following JavaScript code on the search bar. Observe the behavior.
+
+<iframe src="javascript:alert('XSS_SUCCESS')">
+
+5. Go to Wazuh and search for any indication of XSS logs. Why was there nothing there?
+
+6. Attempt to input a more complex query into the search bar. Observe the behavior. Attempt to explain what is happening.
+
+<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/771984076&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+
+7. Attempt to perform a basic search using the search bar and observe the url. Notice there is a parameter being passed named (q).
+
+8. Attempt to alter the value of q with the following:
+
+<script>alert(1)</script>
+
+9. Observe the behavior. Was anything triggered by Suricata?
+
+10. Attempt to trigger the same url using curl from your terminal. Observe the output, is anything there?
+
+curl "http://10.100.102.52:3000/?q=<script>alert(1)</script>"
+
+11. Inspect the logs on Wazuh and determine if any logs show up. Attempt to explain the difference in behavior.
